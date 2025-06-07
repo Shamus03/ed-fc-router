@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css"></link>
+    </head>
+    <body>
+        Select NavRoute.json:
+        <input type="file" accept=".json" id="filepicker">
+
+        <br>
+
+        <pre id="output"></pre>
+        <table>
+            <thead>
+                <tr>
+                    <th>System Name</th>
+                    <th>Jump Dist</th>
+                    <th>Star Class</th>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>Z</th>
+                </tr>
+            </thead>
+            <tbody id="routeTableBody"></tbody>
+        </table>
+    </body>
+        
+    <template id="routeRowTemplate">
+    <tr>
+        <td></td>
+        <td align="right"></td>
+        <td></td>
+        <td align="right"></td>
+        <td align="right"></td>
+        <td align="right"></td>
+    </tr>
+    </template>
+    <script src="app.js"></script>
+</html>

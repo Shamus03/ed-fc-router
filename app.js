@@ -28,7 +28,7 @@ function calculateCarrierRoute(navRoute) {
 //     ...s.stop.StarPos,
 // ].join(',')).join('\n'))
 
-filepicker.addEventListener('change', () => {
+filepicker.onchange = () => {
     const r = new FileReader()
     r.onload = e => {
         const navRoute = JSON.parse(e.target.result)
@@ -40,9 +40,9 @@ filepicker.addEventListener('change', () => {
             row.children[i++].textContent = stop.StarSystem
             row.children[i++].textContent = distance.toLocaleString()
             row.children[i++].textContent = stop.StarClass
-            row.children[i++].textContent = stop.StarPos[0]
-            row.children[i++].textContent = stop.StarPos[1]
-            row.children[i++].textContent = stop.StarPos[2]
+            row.children[i++].textContent = stop.StarPos[0].toLocaleString()
+            row.children[i++].textContent = stop.StarPos[1].toLocaleString()
+            row.children[i++].textContent = stop.StarPos[2].toLocaleString()
             routeTableBody.appendChild(row)
         }
         const totalDistance = starDistance(route[0].stop, route[route.length - 1].stop)
@@ -51,6 +51,15 @@ filepicker.addEventListener('change', () => {
         output.textContent = `Total Distance: ${totalDistance.toLocaleString()} ly
 Total Jump Distance: ${totalJumpDistance.toLocaleString()} ly
 Efficiency: ${efficiency.toLocaleString(undefined, { style: 'percent' })}`
+        copyButton.style.display = ''
     };
     r.readAsText(filepicker.files[0])
-})
+}
+
+copyButton.onclick = () => {
+    const content = [...routeTable.querySelectorAll('tr')]
+        .map(tr => [...tr.querySelectorAll('td,th')].map(td => td.textContent).join('\t'))
+        .join('\n')
+    navigator.clipboard.writeText(content)
+    copyButton.innerText = 'Copied!'
+}

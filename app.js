@@ -21,36 +21,37 @@ function calculateCarrierRoute(navRoute) {
     return route
 }
 
-// const route = calculateCarrierRoute(NavRoute)
-// console.log('System Name,X,Y,Z')
-// console.log(route.map(s => [
-//     s.stop.StarSystem,
-//     ...s.stop.StarPos,
-// ].join(',')).join('\n'))
+function renderRouteTable(route) {
+    routeTableBody.innerHTML = ''
+    for (const { stop, distance } of route) {
+        const row = routeRowTemplate.content.cloneNode(true).children[0]
+        let i = 0
+        row.children[i++].textContent = stop.StarSystem
+        row.children[i++].textContent = distance.toLocaleString()
+        row.children[i++].textContent = stop.StarClass
+        row.children[i++].textContent = stop.StarPos[0].toLocaleString()
+        row.children[i++].textContent = stop.StarPos[1].toLocaleString()
+        row.children[i++].textContent = stop.StarPos[2].toLocaleString()
+        routeTableBody.appendChild(row)
+    }
+}
+
+function renderSummary(navRoute, route) {
+    const totalDistance = starDistance(navRoute.Route[0], route[route.length - 1].stop)
+    const totalJumpDistance = route.map(r => r.distance).reduce((a, b) => a + b)
+    const efficiency = totalDistance / totalJumpDistance
+    output.textContent = `Total Distance: ${totalDistance.toLocaleString()} ly
+Total Jump Distance: ${totalJumpDistance.toLocaleString()} ly
+Efficiency: ${efficiency.toLocaleString(undefined, { style: 'percent' })}`
+}
 
 filepicker.onchange = () => {
     const r = new FileReader()
     r.onload = e => {
         const navRoute = JSON.parse(e.target.result)
         const route = calculateCarrierRoute(navRoute)
-        routeTableBody.innerHTML = ''
-        for (const { stop, distance } of route) {
-            const row = routeRowTemplate.content.cloneNode(true).children[0]
-            let i = 0
-            row.children[i++].textContent = stop.StarSystem
-            row.children[i++].textContent = distance.toLocaleString()
-            row.children[i++].textContent = stop.StarClass
-            row.children[i++].textContent = stop.StarPos[0].toLocaleString()
-            row.children[i++].textContent = stop.StarPos[1].toLocaleString()
-            row.children[i++].textContent = stop.StarPos[2].toLocaleString()
-            routeTableBody.appendChild(row)
-        }
-        const totalDistance = starDistance(route[0].stop, route[route.length - 1].stop)
-        const totalJumpDistance = route.map(r => r.distance).reduce((a, b) => a + b)
-        const efficiency = totalDistance / totalJumpDistance
-        output.textContent = `Total Distance: ${totalDistance.toLocaleString()} ly
-Total Jump Distance: ${totalJumpDistance.toLocaleString()} ly
-Efficiency: ${efficiency.toLocaleString(undefined, { style: 'percent' })}`
+        renderRouteTable(route)
+        renderSummary(navRoute, route)
         copyButton.style.display = ''
     };
     r.readAsText(filepicker.files[0])
